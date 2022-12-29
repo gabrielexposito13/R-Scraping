@@ -39,3 +39,28 @@ map_df(1:250, function(i) {
 }) -> scraped_dataset
 
 #Sys.sleep() is used to not flood the website with extra requests therefore preventing an anti-DDOS countermeasure to drop the connection. 
+
+
+#### After scraping, all posts within a page will become their own observation within the dataset. str_detect() can be used to sort these into binaries:
+
+scraped_dataset <- scraped_dataset %>% mutate(variable_1 = ifelse(str_detect(text,"keyword1|keyword2|keyword3|keyword4"), 1, 0))
+
+# ^ Rinse and repeat with additional variables as needed. Keywords can be reused to expand on previous variables while holding some constant. 
+# Using these binaries -- or in the case of some variables, continuous variables, we can then create some summary statistics to establish causality:
+
+model1 <- lm(dependet_variable ~ independent_variable, scraped_dataset) 
+model2 <- lm(dependet_variable2 ~ independent_variable2, scraped_dataset) 
+
+# Bundle models:
+my_models <-list(model1, model2) 
+
+# Show regression tables:
+# Note that using the following command everything will save into the working directory through the out= command. 
+
+stargazer(my_models, title="All Regression",dep.var.labels=c("Dependent Variable"),
+          covariate.labels=c("Independent Variable"),
+          omit.stat=c("LL","ser","f"),
+          type= "html", out= "Models")
+
+
+
