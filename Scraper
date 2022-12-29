@@ -1,0 +1,41 @@
+# Must have the following libraries. If library is not installed, do install.packages("name")
+
+library(haven)
+library(tidyverse)
+library(readxl)
+library(dplyr)
+library(janitor)
+library(ggplot2)
+library(ggpubr)
+library(sandwich)
+library(clubSandwich)
+library(stargazer)
+library(lmtest)
+library(zoo)
+library(rmarkdown)
+library(tinytex)
+library(ggmap)
+library(rvest)
+library(writexl)
+library(purrr)
+library(curl)
+library(httr)
+
+##### Scrape Code Below: ######
+
+url_base <- "https://website.com/page/" #This is the website and the lead to the other pages within it.
+#Assume 250 pages need to be scraped:
+map_df(1:250, function(i) {
+  
+  Sys.sleep(20)
+  cat(" Page Scraped ")
+  
+  pg <- read_html(paste0(url_base, i))
+  
+  data.frame(text=html_text(html_nodes(pg, "html node here")),
+             date=html_text(html_nodes(pg, "html node here")),
+             stringsAsFactors=FALSE)
+  
+}) -> scraped_dataset
+
+#Sys.sleep() is used to not flood the website with extra requests therefore preventing an anti-DDOS countermeasure to drop the connection. 
